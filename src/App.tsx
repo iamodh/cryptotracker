@@ -1,7 +1,11 @@
 import Router from "./Router";
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { HelmetProvider } from "react-helmet-async";
+import { lightTheme, darkTheme } from "./theme";
+import { useState } from "react";
+import { useRecoilValue } from "recoil";
+import { isDarkAtom } from "./atoms";
 const GlobalStyle = createGlobalStyle`
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -56,7 +60,8 @@ table {
 body {
   font-family: 'Source Sans 3', sans-serif;  
   background-color: ${(props) => props.theme.bgColor};
-  color: ${(props) => props.theme.textColor}
+  color: ${(props) => props.theme.textColor};
+  transition: all 0.1s ease-in;
 }
 a {
   text-decoration: none;
@@ -66,13 +71,16 @@ a {
 `;
 
 function App() {
+  const isDark = useRecoilValue(isDarkAtom);
   return (
     <>
-      <GlobalStyle />
-      <HelmetProvider>
-        <Router />
-      </HelmetProvider>
-      {/* <ReactQueryDevtools initialIsOpen={true} /> */}
+      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+        <GlobalStyle />
+        <HelmetProvider>
+          <Router />
+        </HelmetProvider>
+        {/* <ReactQueryDevtools initialIsOpen={true} /> */}
+      </ThemeProvider>
     </>
   );
 }
